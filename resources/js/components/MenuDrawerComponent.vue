@@ -1,0 +1,28 @@
+<template>
+    <v-navigation-drawer clipped app>
+        <v-list>
+            <v-list-item-group>
+                <v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title>Inicio</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title>Evaluadores</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title>Estudiantes</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title>Protocolos</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list-item-group>
+        </v-list>
+    </v-navigation-drawer>
+</template>
