@@ -96,6 +96,24 @@
                                                 v-if="thesis_protocol.thesis_protocol_status_id == 2"
                                                 :thesis-protocol-id="thesis_protocol.thesis_protocol_student_id"
                                             ></assign-evaluator-dialog-component>
+                                            <div
+                                                v-else-if="thesis_protocol.thesis_protocol_status_id == 3"
+                                                class="text-md-subtitle-1"
+                                            >
+                                                REVISADO
+                                            </div>
+                                            <div
+                                                v-else-if="thesis_protocol.thesis_protocol_status_id == 4"
+                                                class="text-md-subtitle-1 success--text"
+                                            >
+                                                APROBADO
+                                            </div>
+                                            <div
+                                                v-else-if="thesis_protocol.thesis_protocol_status_id == 5"
+                                                class="text-md-subtitle-1 error--text"
+                                            >
+                                                RECHAZADO
+                                            </div>
                                         </v-list-item>
                                     </v-list>
                                 </v-col>
