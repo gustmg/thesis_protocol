@@ -1,22 +1,22 @@
-import Vue from "vue";
-import Vuetify from "vuetify";
+import Vue from 'vue'
+import Vuetify from 'vuetify'
 
-Vue.use(Vuetify);
+Vue.use(Vuetify)
 
 const opts = {
     theme: {
         themes: {
             light: {
-                primary: "#007569",
-                secondary: "#3AC2B4",
-                accent: "#00C2AE",
-                error: "#B00020",
-                info: "#2196F3",
-                success: "#4CAF50",
-                warning: "#FFC107"
-            }
-        }
-    }
-};
+                primary: '#003b5c',
+                secondary: '#3b6589',
+                accent: '#0093E8',
+                error: '#B00020',
+                info: '#2196F3',
+                success: '#4CAF50',
+                warning: '#FFC107',
+            },
+        },
+    },
+}
 
-export default new Vuetify(opts);
+export default new Vuetify(opts)

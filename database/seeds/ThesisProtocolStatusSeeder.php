@@ -12,7 +12,13 @@ class ThesisProtocolStatusSeeder extends Seeder
     public function run()
     {
         DB::table('thesis_protocol_status')->insert(array(
+            'thesis_protocol_status_name' => 'Sin subir',
+        ));
+        DB::table('thesis_protocol_status')->insert(array(
             'thesis_protocol_status_name' => 'A revisión',
+        ));
+        DB::table('thesis_protocol_status')->insert(array(
+            'thesis_protocol_status_name' => 'Revisado',
         ));
         DB::table('thesis_protocol_status')->insert(array(
             'thesis_protocol_status_name' => 'Aprobado',

@@ -219,7 +219,8 @@
                         userType: parseInt(this.newUserRadioGroup),
                     })
                     .then(response => {
-                        console.log(response.data)
+                        // console.log(response.data)
+                        window.location = 'home'
                     })
                     .catch(function(error) {
                         console.log(error)

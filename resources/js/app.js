@@ -8,6 +8,13 @@ require('./bootstrap')
 
 import Vue from 'vue'
 import vuetify from '../js/plugins/vuetify'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+import storeData from '../js/store/index'
+
+const store = new Vuex.Store(storeData)
 
 /**
  * The following block of code may be used to automatically register your
@@ -26,6 +33,12 @@ Vue.component('home-student-component', require('./components/HomeStudentCompone
 Vue.component('home-admin-component', require('./components/HomeAdminComponent.vue').default)
 Vue.component('menu-drawer-component', require('./components/MenuDrawerComponent.vue').default)
 Vue.component('top-app-bar-component', require('./components/TopAppBarComponent.vue').default)
+Vue.component('assign-evaluator-dialog-component', require('./components/AssignEvaluatorDialogComponent.vue').default)
+Vue.component('home-evaluator-component', require('./components/HomeEvaluatorComponent.vue').default)
+Vue.component(
+    'thesis-protocol-evaluation-component',
+    require('./components/ThesisProtocolEvaluationComponent.vue').default
+)
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -36,4 +49,5 @@ Vue.component('top-app-bar-component', require('./components/TopAppBarComponent.
 const app = new Vue({
     el: '#app',
     vuetify,
+    store,
 })

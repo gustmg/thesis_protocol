@@ -8,6 +8,12 @@ class ThesisProtocolRevision extends Model
 {
     protected $table = 'thesis_protocol_revisions';
     protected $primaryKey = 'thesis_protocol_revision_id';
+    public $timestamps = false;
+
+    public function thesis_protocol_student_id()
+    {
+        return $this->belongsTo('App\ThesisProtocol', 'thesis_protocol_student_id');
+    }
 
     public function thesis_protocol_title_status ()
     {

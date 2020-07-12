@@ -14,46 +14,46 @@ class CreateThesisProtocolRevisionsTable extends Migration
     public function up()
     {
         Schema::create('thesis_protocol_revisions', function (Blueprint $table) {
-            $table->unsignedBigInteger('thesis_protocol_student_id');
+            $table->id('thesis_protocol_revision_id');
             $table->unsignedBigInteger('title_status_id');
-            $table->string('title_commentary');
+            $table->string('title_commentary')->nullable();
             $table->unsignedBigInteger('institution_status_id');
-            $table->string('institution_commentary');
+            $table->string('institution_commentary')->nullable();
             $table->unsignedBigInteger('scholarship_status_id');
-            $table->string('scholarship_commentary');
+            $table->string('scholarship_commentary')->nullable();
             $table->unsignedBigInteger('assessor_status_id');
-            $table->string('assessor_commentary');
-            $table->unsignedBigInteger('origin_proyect_status_id');
-            $table->string('origin_proyect_commentary');
+            $table->string('assessor_commentary')->nullable();
+            $table->unsignedBigInteger('second_assessor_status_id');
+            $table->string('second_assessor_commentary')->nullable();
             $table->unsignedBigInteger('summary_status_id');
-            $table->string('summary_commentary');
+            $table->string('summary_commentary')->nullable();
             $table->unsignedBigInteger('antecedent_status_id');
-            $table->string('antecedent_commentary');
+            $table->string('antecedent_commentary')->nullable();
             $table->unsignedBigInteger('general_objective_status_id');
-            $table->string('general_objective_commentary');
+            $table->string('general_objective_commentary')->nullable();
             $table->unsignedBigInteger('methodology_status_id');
-            $table->string('methodology_commentary');
+            $table->string('methodology_commentary')->nullable();
             $table->unsignedBigInteger('schedule_status_id');
-            $table->string('schedule_commentary');
+            $table->string('schedule_commentary')->nullable();
             $table->unsignedBigInteger('infrastructure_status_id');
-            $table->string('infrastructure_commentary');
+            $table->string('infrastructure_commentary')->nullable();
             $table->unsignedBigInteger('art_state_status_id');
-            $table->string('art_state_commentary');
+            $table->string('art_state_commentary')->nullable();
             $table->unsignedBigInteger('expected_results_status_id');
-            $table->string('expected_results_commentary');
+            $table->string('expected_results_commentary')->nullable();
             $table->unsignedBigInteger('socioeconomic_impact_status_id');
-            $table->string('socioeconomic_impact_commentary');
+            $table->string('socioeconomic_impact_commentary')->nullable();
             $table->unsignedBigInteger('contributions_status_id');
-            $table->string('contributions_commentary');
+            $table->string('contributions_commentary')->nullable();
             $table->unsignedBigInteger('bibliography_status_id');
-            $table->string('bibliography_commentary');
+            $table->string('bibliography_commentary')->nullable();
+            $table->unsignedBigInteger('thesis_protocol_student_id');
 
-            $table->foreign('thesis_protocol_student_id')->references('id')->on('users');
             $table->foreign('title_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('institution_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('scholarship_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('assessor_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
-            $table->foreign('origin_proyect_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
+            $table->foreign('second_assessor_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('summary_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('antecedent_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('general_objective_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
@@ -65,6 +65,7 @@ class CreateThesisProtocolRevisionsTable extends Migration
             $table->foreign('socioeconomic_impact_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('contributions_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
             $table->foreign('bibliography_status_id')->references('thesis_protocol_field_status_id')->on('thesis_protocol_field_status');
+            $table->foreign('thesis_protocol_student_id')->references('id')->on('users');
         });
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
+use App\ThesisProtocol;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -64,15 +65,34 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'registration_number' => $data['registrationNumber'],
-            'career' => $data['career'],
-            'phone' => $data['phone'],
-            'job_phone' => $data['jobPhone'],
-            'user_type' => $data['userType'],
-        ]);
+        $user = new User;
+        $user->name=$data['name'];
+        $user->email=$data['email'];
+        $user->password=Hash::make($data['password']);
+        $user->registration_number=$data['registrationNumber'];
+        $user->career=$data['career'];
+        $user->phone=$data['phone'];
+        $user->job_phone=$data['jobPhone'];
+        $user->user_type=$data['userType'];
+        $user->save();
+
+        if($user->user_type == 1){
+            $thesis_protocol=new ThesisProtocol;
+            $thesis_protocol->thesis_protocol_student_id=$user->id;
+            $thesis_protocol->save();
+        }
+
+        return $user;
+
+        // return User::create([
+        //     'name' => $data['name'],
+        //     'email' => $data['email'],
+        //     'password' => Hash::make($data['password']),
+        //     'registration_number' => $data['registrationNumber'],
+        //     'career' => $data['career'],
+        //     'phone' => $data['phone'],
+        //     'job_phone' => $data['jobPhone'],
+        //     'user_type' => $data['userType'],
+        // ]);
     }
 }

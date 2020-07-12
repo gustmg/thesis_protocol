@@ -1,7 +1,8 @@
 <template>
-    <v-container>
+    <v-container v-if="thesisProtocol">
         <v-row>
             <v-col cols="12">
+                <v-btn v-on:click="setData()">Agregar datos</v-btn>
                 <v-stepper v-model="thesisProtocolStepper" alt-labels>
                     <v-stepper-header>
                         <v-stepper-step step="1">
@@ -19,208 +20,421 @@
                     <v-stepper-content step="1">
                         <v-container>
                             <v-form v-model="generalInfoForm">
-                                <div class="text-subheader-2">Titulo del proyecto</div>
+                                <div class="text-h5 d-inline">
+                                    Titulo del proyecto
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('title_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('title_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <v-text-field
-                                            v-model="title"
+                                            v-model="thesisProtocol.thesis_protocol_title"
                                             :rules="textRules"
                                             placeholder="Ingrese el título de su tésis..."
+                                            :readonly="getThesisProtocolFieldStatus('title_status_id') == 1"
                                             outlined
                                             required
                                             autofocus
                                         ></v-text-field>
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{ getThesisProtocolFieldCommentary('title_commentary') }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Institución de realización</div>
+                                <div class="text-h5 d-inline">
+                                    Institución de realización
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('institution_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('institution_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="institutionName"
+                                            v-model="thesisProtocol.thesis_protocol_institution_name"
                                             :rules="textRules"
                                             label="Nombre de la institución"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('institution_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="institutionDepartment"
+                                            v-model="thesisProtocol.thesis_protocol_institution_department"
                                             :rules="textRules"
                                             label="Departamento"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('institution_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="9">
                                         <v-text-field
-                                            v-model="institutionAddress"
+                                            v-model="thesisProtocol.thesis_protocol_institution_address"
                                             :rules="textRules"
                                             label="Dirección"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('institution_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="institutionPhone"
+                                            v-model="thesisProtocol.thesis_protocol_institution_phone"
                                             :rules="textRules"
                                             label="Teléfono"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('institution_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('institution_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Beca de tésis (Opcional)</div>
+                                <div class="text-h5 d-inline">
+                                    Beca de tésis (Opcional)
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('scholarship_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('scholarship_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="scholarshipInstitution"
+                                            v-model="thesisProtocol.thesis_protocol_scholarship_institution"
                                             label="Institución que otorga la beca"
                                             outlined
+                                            :readonly="getThesisProtocolFieldStatus('scholarship_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="scholarshipType"
+                                            v-model="thesisProtocol.thesis_protocol_scholarship_type"
                                             label="Tipo de beca"
                                             outlined
+                                            :readonly="getThesisProtocolFieldStatus('scholarship_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="scholarshipVigency"
+                                            v-model="thesisProtocol.thesis_protocol_scholarship_vigency"
                                             label="Vigencia"
                                             outlined
+                                            :readonly="getThesisProtocolFieldStatus('scholarship_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('scholarship_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Asesor 1</div>
+                                <div class="text-h5 d-inline">
+                                    Asesor principal
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('assessor_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('assessor_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="adviserName"
+                                            v-model="thesisProtocol.thesis_protocol_assessor_name"
                                             :rules="textRules"
                                             label="Nombre del asesor"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('assessor_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="adviserAcademicGrade"
+                                            v-model="thesisProtocol.thesis_protocol_assessor_academic_degree"
                                             :rules="textRules"
                                             label="Grado académico del asesor"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('assessor_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="adviserParticularPhone"
+                                            v-model="thesisProtocol.thesis_protocol_assessor_phone"
                                             :rules="textRules"
                                             label="Teléfono particular"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('assessor_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="adviserInstitution"
+                                            v-model="thesisProtocol.thesis_protocol_assessor_institution"
                                             :rules="textRules"
                                             label="Institución"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('assessor_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="adviserDepartment"
+                                            v-model="thesisProtocol.thesis_protocol_assessor_adscription_department"
                                             :rules="textRules"
                                             label="Departamento de adscripción"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('assessor_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="9">
                                         <v-text-field
-                                            v-model="adviserInstitutionAddress"
+                                            v-model="thesisProtocol.thesis_protocol_assessor_address"
                                             :rules="textRules"
                                             label="Dirección"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('assessor_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="adviserPhone"
+                                            v-model="thesisProtocol.thesis_protocol_assessor_job_phone"
                                             :rules="textRules"
                                             label="Teléfono"
                                             outlined
                                             required
+                                            :readonly="getThesisProtocolFieldStatus('assessor_status_id') == 1"
                                         ></v-text-field>
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{ getThesisProtocolFieldCommentary('assessor_commentary') }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Asesor 2 (Opcional)</div>
+                                <div class="text-h5 d-inline">
+                                    Asesor secundario (Opcional)
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('second_assessor_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('second_assessor_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="secondAdviserName"
+                                            v-model="thesisProtocol.thesis_protocol_second_assessor_name"
                                             label="Nombre del asesor"
                                             outlined
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="secondAdviserAcademicGrade"
+                                            v-model="thesisProtocol.thesis_protocol_second_assessor_academic_degree"
                                             label="Grado académico del asesor"
                                             outlined
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="secondAdviserPhone"
+                                            v-model="thesisProtocol.thesis_protocol_second_assessor_phone"
                                             label="Teléfono particular"
                                             outlined
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="secondAdviserInstitution"
+                                            v-model="thesisProtocol.thesis_protocol_second_assessor_institution"
                                             label="Institución"
                                             outlined
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="6">
                                         <v-text-field
-                                            v-model="secondAdviserDepartment"
+                                            v-model="
+                                                thesisProtocol.thesis_protocol_second_assessor_adscription_department
+                                            "
                                             label="Departamento de adscripción"
                                             outlined
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="9">
                                         <v-text-field
-                                            v-model="secondAdviserInstitutionAddress"
+                                            v-model="thesisProtocol.thesis_protocol_second_assessor_address"
                                             label="Dirección"
                                             outlined
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="3">
                                         <v-text-field
-                                            v-model="secondAdviserPhone"
+                                            v-model="thesisProtocol.thesis_protocol_second_assessor_job_phone"
                                             label="Teléfono"
                                             outlined
                                         ></v-text-field>
                                     </v-col>
                                     <v-col cols="12">
                                         <v-textarea
-                                            v-model="secondAdviserJustification"
+                                            v-model="thesisProtocol.thesis_protocol_second_assessor_justification"
                                             rows="6"
                                             outlined
                                             no-resize
                                             label="Justificación"
                                         >
                                         </v-textarea>
+                                    </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('second_assessor_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
                                     </v-col>
                                 </v-row>
                             </v-form>
@@ -240,11 +454,35 @@
                     <v-stepper-content step="2">
                         <v-container>
                             <v-form>
-                                <div class="text-subheader-2">Resumen</div>
+                                <div class="text-h5 d-inline">
+                                    Resumen
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('summary_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('summary_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectSummary"
+                                            v-model="thesisProtocol.thesis_protocol_summary"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -258,15 +496,60 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_summary.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{ getThesisProtocolFieldCommentary('summary_commentary') }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Antecedentes del proyecto</div>
+                                <div class="text-h5 d-inline">
+                                    Antecedentes del proyecto
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('antecedent_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('antecedent_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectAntecedent"
+                                            v-model="thesisProtocol.thesis_protocol_antecedent"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -280,15 +563,62 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_antecedent.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('antecedent_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Objetivos generales y específicos del proyecto</div>
+                                <div class="text-h5 d-inline">
+                                    Objetivos generales y específicos del proyecto
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('general_objective_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('general_objective_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectGeneralObjective"
+                                            v-model="thesisProtocol.thesis_protocol_general_objective"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -302,15 +632,65 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_general_objective.slice(
+                                                                1,
+                                                                -1
+                                                            )
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('general_objective_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Metodología</div>
+                                <div class="text-h5 d-inline">
+                                    Metodología
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('methodology_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('methodology_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectMethodology"
+                                            v-model="thesisProtocol.thesis_protocol_methodology"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -324,15 +704,62 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_methodology.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('methodology_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Cronograma de actividades</div>
+                                <div class="text-h5 d-inline">
+                                    Cronograma de actividades
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('schedule_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('schedule_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectSchedule"
+                                            v-model="thesisProtocol.thesis_protocol_schedule"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -346,15 +773,60 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_schedule.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{ getThesisProtocolFieldCommentary('schedule_commentary') }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Infraestructura</div>
+                                <div class="text-h5 d-inline">
+                                    Infraestructura
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('infrastructure_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('infrastructure_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectInfrastructure"
+                                            v-model="thesisProtocol.thesis_protocol_infrastructure"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -368,15 +840,62 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_infrastructure.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('infrastructure_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Estado del campo del arte</div>
+                                <div class="text-h5 d-inline">
+                                    Estado del campo del arte
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('art_state_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('art_state_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectArtState"
+                                            v-model="thesisProtocol.thesis_protocol_art_state"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -390,15 +909,62 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_art_state.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('art_state_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Resultados esperados</div>
+                                <div class="text-h5 d-inline">
+                                    Resultados esperados
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('expected_results_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip
+                                        v-else-if="getThesisProtocolFieldStatus('expected_results_status_id') == 2"
+                                        class="warning"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectExpectedResults"
+                                            v-model="thesisProtocol.thesis_protocol_expected_results"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -412,15 +978,58 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_expected_results.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('expected_results_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Impacto socioeconómico</div>
+                                <div class="text-h5 d-inline">
+                                    Impacto socioeconómico
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('socioeconomic_impact_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip v-else-if="getThesisProtocolFieldStatus == 2" class="warning" label>
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectSocioeconomicImpact"
+                                            v-model="thesisProtocol.thesis_protocol_socioeconomic_impact"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -434,15 +1043,63 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_socioeconomic_impact.slice(
+                                                                1,
+                                                                -1
+                                                            )
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary(
+                                                            'socioeconomic_impact_commentary'
+                                                        )
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Aportaciones</div>
+                                <div class="text-h5 d-inline">
+                                    Aportaciones
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('contributions_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip v-else-if="getThesisProtocolFieldStatus == 2" class="warning" label>
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectContributions"
+                                            v-model="thesisProtocol.thesis_protocol_contributions"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -456,15 +1113,58 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_contributions.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
                                     </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('contributions_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
-                                <div class="text-subheader-2">Bibliografía</div>
+                                <div class="text-h5 d-inline">
+                                    Bibliografía
+                                </div>
+                                <div v-if="thesisProtocol.thesis_protocol_status_id == 3" class="d-inline">
+                                    <v-chip
+                                        v-if="getThesisProtocolFieldStatus('bibliography_status_id') == 1"
+                                        class="success"
+                                        label
+                                    >
+                                        <v-icon class="white--text" left>mdi-check</v-icon>
+                                        Completo
+                                    </v-chip>
+                                    <v-chip v-else-if="getThesisProtocolFieldStatus == 2" class="warning" label>
+                                        <v-icon class="white--text" left>mdi-minus-circle-outline</v-icon>
+                                        Regular
+                                    </v-chip>
+                                    <v-chip v-else class="error" label>
+                                        <v-icon class="white--text" left>mdi-window-close</v-icon>
+                                        Incompleto
+                                    </v-chip>
+                                </div>
                                 <v-row>
                                     <v-col cols="12">
                                         <editor
-                                            v-model="proyectBibliography"
+                                            v-model="thesisProtocol.thesis_protocol_bibliography"
                                             api-key="4kz4f0znn7zm7z8oeui23ewyzj4elhcdrwv15nz02z0euzim"
                                             :init="{
                                                 height: 500,
@@ -478,8 +1178,31 @@
                                                     'undo redo | formatselect | bold italic backcolor | \
            alignleft aligncenter alignright alignjustify | \
            bullist numlist outdent indent | removeformat | help',
+                                                init_instance_callback: function(editor) {
+                                                    if (thesisProtocol.thesis_protocol_status_id == 3) {
+                                                        editor.setContent(
+                                                            thesisProtocol.thesis_protocol_bibliography.slice(1, -1)
+                                                        )
+                                                    }
+                                                },
                                             }"
                                         />
+                                    </v-col>
+                                    <v-col
+                                        v-if="thesisProtocol.thesis_protocol_status_id == 3"
+                                        cols="12"
+                                        class="pt-0 mb-12"
+                                    >
+                                        <v-card class="info">
+                                            <v-card-text>
+                                                <div class="text-md-subtitle-1 white--text">
+                                                    Observación:
+                                                    <i>{{
+                                                        getThesisProtocolFieldCommentary('bibliography_commentary')
+                                                    }}</i>
+                                                </div>
+                                            </v-card-text>
+                                        </v-card>
                                     </v-col>
                                 </v-row>
                             </v-form>
@@ -500,21 +1223,37 @@
                     <v-stepper-content step="3">
                         <v-container>
                             <v-row>
-                                <v-col col="12" align="center" v-if="thesisProtocolStatusId == 1">
+                                <v-col
+                                    col="12"
+                                    align="center"
+                                    v-if="
+                                        thesisProtocol.thesis_protocol_status_id == 1 ||
+                                            thesisProtocol.thesis_protocol_status_id == 2 ||
+                                            thesisProtocol.thesis_protocol_status_id == 3
+                                    "
+                                >
                                     <v-icon size="80" class="primary--text">mdi-file-edit</v-icon>
                                     <div class="text-md-h4">¡Protocolo en revisión!</div>
                                     <div class="text-md-h6">
                                         Uno de los evaluadores se encargará de revisarlo.
                                     </div>
                                 </v-col>
-                                <v-col col="12" align="center" v-else-if="thesisProtocolStatusId == 2">
+                                <v-col
+                                    col="12"
+                                    align="center"
+                                    v-else-if="thesisProtocol.thesis_protocol_status_id == 4"
+                                >
                                     <v-icon size="80" class="primary--text">mdi-check-outline</v-icon>
                                     <div class="text-md-h4">¡Protocolo aprobado!</div>
                                     <div class="text-md-h6">
-                                        Felicidades. Se ha aprobado tu protocolo.
+                                        Tu protocolo ha sido aprobado.
                                     </div>
                                 </v-col>
-                                <v-col col="12" align="center" v-else-if="thesisProtocolStatusId == 3">
+                                <v-col
+                                    col="12"
+                                    align="center"
+                                    v-else-if="thesisProtocol.thesis_protocol_status_id == 5"
+                                >
                                     <v-icon size="80" class="primary--text">mdi-emoticon-sad-outline</v-icon>
                                     <div class="text-md-h4">Lo sentimos</div>
                                     <div class="text-md-h6">
@@ -534,6 +1273,30 @@
     export default {
         components: {
             editor: Editor,
+        },
+
+        props: {
+            studentId: {
+                type: Number,
+            },
+        },
+
+        async mounted() {
+            await axios
+                .get('thesis_protocols/' + this.studentId)
+                .then(response => {
+                    this.thesisProtocol = response.data.thesis_protocol
+                })
+                .catch(error => console.log(error))
+
+            if (
+                this.thesisProtocol.thesis_protocol_status_id == 1 ||
+                this.thesisProtocol.thesis_protocol_status_id == 3
+            ) {
+                this.thesisProtocolStepper = 1
+            } else {
+                this.thesisProtocolStepper = 3
+            }
         },
 
         computed: {
@@ -560,104 +1323,12 @@
 
         data() {
             return {
+                thesisProtocol: null,
+                thesisProtocolStepper: 1,
                 loading: false,
-                thesisProtocolStepper: 3,
-                //Form validator model
                 generalInfoForm: false,
-                // General info form inputs
-                // title: '',
-                // institutionName: '',
-                // institutionDepartment: '',
-                // institutionAddress: '',
-                // institutionPhone: '',
-                // scholarshipInstitution: '',
-                // scholarshipType: '',
-                // scholarshipVigency: '',
-                // adviserName: '',
-                // adviserAcademicGrade: '',
-                // adviserParticularPhone: '',
-                // adviserInstitution: '',
-                // adviserDepartment: '',
-                // adviserInstitutionAddress: '',
-                // adviserPhone: '',
-                // secondAdviserName: '',
-                // secondAdviserAcademicGrade: '',
-                // secondAdviserPhone: '',
-                // secondAdviserInstitution: '',
-                // secondAdviserDepartment: '',
-                // secondAdviserInstitutionAddress: '',
-                // secondAdviserPhone: '',
-                // secondAdviserJustification: '',
-
-                // General info form inputs TEST
-                title:
-                    'Aplicación Colaborativa para Gestionar la Evaluación de la Titulación por Experiencia Profesional',
-                institutionName: 'Benemérita Universidad Autónoma de Puebla. ',
-                institutionDepartment: 'Facultad de Ciencias de la Computación BUAP',
-                institutionAddress: 'Avenida San Claudio, Blvrd 14 Sur, Cdad. Universitaria, 72592 Puebla, Pue.',
-                institutionPhone: '01 222 229 5500 ext. 7204',
-                scholarshipInstitution: '',
-                scholarshipType: '',
-                scholarshipVigency: '',
-                adviserName: 'Maria Luz Adolfina  Sánchea Gálvez',
-                adviserAcademicGrade: 'Doctorado',
-                adviserParticularPhone: '222-244-6117',
-                adviserInstitution: 'Benemérita Universidad Autónoma de Puebla',
-                adviserDepartment: 'Facultad de Ciencias de la Computación',
-                adviserInstitutionAddress: 'Avenida San Claudio, Boulevard 14 Sur, Ciudad Universitaria, 72592',
-                adviserPhone: '01 222 229 5500 ext. 7220',
-                secondAdviserName: '',
-                secondAdviserAcademicGrade: '',
-                secondAdviserPhone: '',
-                secondAdviserInstitution: '',
-                secondAdviserDepartment: '',
-                secondAdviserInstitutionAddress: '',
-                secondAdviserPhone: '',
-                secondAdviserJustification: '',
-                //Validations
                 textRules: [v => !!v || this.requiredFieldErrorMessage],
                 requiredFieldErrorMessage: 'Este campo es requerido.',
-
-                //Proyect description form inputs
-                // proyectSummary: '',
-                // proyectAntecedent: '',
-                // proyectGeneralObjective: '',
-                // proyectMethodology: '',
-                // proyectSchedule: '',
-                // proyectInfrastructure: '',
-                // proyectArtState: '',
-                // proyectExpectedResults: '',
-                // proyectSocioeconomicImpact: '',
-                // proyectContributions: '',
-                // proyectBibliography: '',
-
-                //Proyect description form inputs TEST
-                proyectSummary:
-                    '"<p>El presente proyecto consiste en desarrollar una aplicaci&oacute;n colaborativa que permita llevar a cabo la Evaluaci&oacute;n de la Titulaci&oacute;n por Experiencia Profesional.&nbsp; Por consiguiente, ser&aacute; necesario presentar a los diversos usuarios las interfaces adecuadas (con un dise&ntilde;o intuitivo, responsivo y f&aacute;cil de usar), para su buen funcionamiento. Por tanto, esta aplicaci&oacute;n estar&aacute; orientada en tres componentes primarios:</p>\n<ol>\n<li>La tecnolog&iacute;a …o a la misma. Proceso que involucra actores, roles, tareas, recursos compartidos</li>\n<li><strong>La coordinaci&oacute;n.</strong> Gestiona las dependencias entre las actividades realizadas en el grupo para alcanzar el objetivo. Una colaboraci&oacute;n efectiva requiere de una planificaci&oacute;n y sincronizaci&oacute;n de las actividades que se realizan en el grupo, por lo que ser&aacute; necesario la identificaci&oacute;n, de la distribuci&oacute;n y delegaci&oacute;n de responsabilidades.</li>\n</ol>"',
-                proyectAntecedent:
-                    '"<p>En la Facultad de Ciencias de la Computaci&oacute;n, los egresados pueden obtener el grado de licenciado, optando por la Titulaci&oacute;n por Experiencia Profesional, que es una estrategia adecuada para incrementar el &iacute;ndice de titulados en dicha facultad y que est&aacute; centrada en aquellos que llevan m&aacute;s de 5 a&ntilde;os laborando. El proceso que se requiere para evaluar los proyectos que avalan la experiencia profesional de los sustentantes, actualmente se realiza a mano. Por tanto, …ante y los documentos de los sustentantes est&aacute;n a disposici&oacute;n de estos evaluadores.</p>\n<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; La aplicaci&oacute;n se desarrollar&aacute; utilizando las tecnolog&iacute;as web: HTML (<em>HyperText Markup Language</em>) [1], CSS (<em>Cascading Style Sheets</em>) [2], Javascript [3], PHP (<em>Hypertext Pre-Processor</em>) [4], SQL (<em>Structured Query Language</em>) [5], servidor Xampp [6], editor de c&oacute;digo Brackets [7], Codelgniter [8] y Bootstrap [9].</p>"',
-                proyectGeneralObjective:
-                    '"<p>El objetivo general del trabajo de tesis es: Elaborar una aplicaci&oacute;n que permita gestionar todo el proceso que se lleva a cabo la titulaci&oacute;n por experiencia profesional.</p>\n<p>Mientras que los objetivos espec&iacute;ficos son:</p>\n<ol>\n<li>Crear un prototipo para el proceso de evaluaci&oacute;n de la titulaci&oacute;n por experiencia profesional.</li>\n<li>Generar un entorno colaborativo apropiado para compartir la informaci&oacute;n requerida, as&iacute; como propiciar la colaboraci&oacute;n, coordinaci&oacute;n y comunicaci&oacute;n entre los roles participantes.</li>\n<li>Proporcionar interfaces robustas, usables y seguras a los usuarios.</li>\n<li>Elaborar el documento de tesis.</li>\n<li>Presentar la tesis.</li>\n</ol>"',
-                proyectMethodology:
-                    '"<p>Los pasos a seguir para desarrollar la aplicaci&oacute;n son:</p>\n<ol>\n<li>Analizar aplicaciones similares a la que se desarrollar&aacute; en este trabajo.</li>\n<li>Revisar las tecnolog&iacute;as web que se utilizar&aacute;n en el desarrollo del proyecto.</li>\n<li>Definir la metodolog&iacute;a a seguir para dicho desarrollo.</li>\n<li>Especificar los requisitos.</li>\n<li>Establecer el dise&ntilde;o.</li>\n<li>Elaborar la implementaci&oacute;n.</li>\n<li>Realizar las pruebas.</li>\n<li>Crear un prototipo.</li>\n<li>Escribir el documento de tesis.</li>\n<li>Presentar la tesis.</li>\n</ol>"',
-                proyectSchedule:
-                    '"<p>El cronograma de actividades se muestra a continuaci&oacute;n:</p>\n<p>&nbsp;</p>\n<table width="535">\n<tbody>\n<tr>\n<td width="102">\n<p><strong>ACTIVIDAD</strong></p>\n</td>\n<td width="106">\n<p><strong>MAYO</strong></p>\n</td>\n<td width="113">\n<p><strong>JUNIO </strong></p>\n</td>\n<td width="113">\n<p><strong>JULIO</strong></p>\n</td>\n<td width="100">\n<p><strong>AGOSTO</strong></p>\n</td>\n</tr>\n<tr>\n<td width="102">\n<p><strong>1</strong></p>\n</td>\n<td width="106">\n<p>&n…;</p>\n</td>\n</tr>\n<tr>\n<td width="102">\n<p><strong>9</strong></p>\n</td>\n<td width="106">\n<p>&nbsp;</p>\n</td>\n<td width="113">\n<p>&nbsp;</p>\n</td>\n<td width="113">\n<p>&nbsp;</p>\n</td>\n<td width="100">\n<p>&nbsp;</p>\n</td>\n</tr>\n<tr>\n<td width="102">\n<p><strong>10</strong></p>\n</td>\n<td width="106">\n<p>&nbsp;</p>\n</td>\n<td width="113">\n<p>&nbsp;</p>\n</td>\n<td width="113">\n<p>&nbsp;</p>\n</td>\n<td width="100">\n<p>&nbsp;</p>\n</td>\n</tr>\n</tbody>\n</table>"',
-                proyectInfrastructure:
-                    '"<p>El <em>hardware</em> a utilizar para el desarrollo de la aplicaci&oacute;n es:</p>\n<ul>\n<li>lenovo G50</li>\n<li>Sistema operativo Windows 10 Pro</li>\n<li>Disco duro de 1tb</li>\n<li>Procesador Intel Celeron N2830 (2.16 GHz 1600 MHz 1 MB)</li>\n<li>4 GB DE RAM</li>\n<li>Pantalla de 15,6&rdquo;&nbsp;HD (1366 x 768)</li>\n<li>Gr&aacute;ficos Intel HD</li>\n<li>Conectores:</li>\n</ul>\n<ul>\n<li>1 USB 3.0</li>\n<li>2 USB 2,0</li>\n<li>Combo de conectores para audio (auricular y micr&oacute;fono)</li>\n<…<ul>\n<li><strong>Tecnolog&iacute;as de cliente</strong>: permiten crear interfaces de usuario y establecer comunicaci&oacute;n con el servidor basadas en HTML, CSS y JavaScript, en este caso, el navegador actuara como int&eacute;rprete. As&iacute; como Bootstrap.</li>\n<li><strong>Tecnolog&iacute;as de servidor:</strong> Implementar comportamientos de la aplicaci&oacute;n web en el servidor PHP XAMPP, Codelgniter</li>\n<li>Adem&aacute;s se utilizar&aacute; el editor de C&oacute;digo: Brackets</li>\n</ul>"',
-                proyectArtState:
-                    '"<p>El estado del arte es una modalidad de la investigaci&oacute;n documental que permite el estudio del conocimiento acumulado (escrito en textos) dentro de un &aacute;rea espec&iacute;fica. Sus or&iacute;genes se remontan a los a&ntilde;os ochenta, &eacute;poca en la que se utilizaba como herramienta para compilar y sistematizar informaci&oacute;n especialmente el &aacute;rea de ciencias sociales, sin embargo, en la medida en que estos estudios se realizaron con el fin de hacer balances sobre las tendencias de investigaci&oacute;n y como punto de partida para la toma de decisiones, el estado del arte se posicion&oacute; como una modalidad de investigaci&oacute;n.</p>"',
-                proyectExpectedResults:
-                    '"<p>Los principales resultados de esta tesis son:</p>\n<ol>\n<li>El prototipo de la aplicaci&oacute;n para evaluar la Titulaci&oacute;n por Experiencia Profesional.</li>\n<li>La aplicaci&oacute;n de una metodolog&iacute;a para el desarrollo de dicha aplicaci&oacute;n.</li>\n<li>La aplicaci&oacute;n de diferentes tecnolog&iacute;as web.</li>\n<li>El documento de tesis.</li>\n<li>La obtenci&oacute;n del grado de Licenciada en la Ingenier&iacute;a en Ciencias de la Computaci&oacute;n.</li>\n</ol>"',
-                proyectSocioeconomicImpact:
-                    '"<p>El impacto socioecon&oacute;mico se centra en reducci&oacute;n de gastos, papel y tiempo. As&iacute; como reducir el estr&eacute;s a los sustentantes.</p>"',
-                proyectContributions:
-                    '"<p>La principal aportaci&oacute;n es una aplicaci&oacute;n que permita evaluar colaborativamente los expedientes de los sustentantes para la Titulaci&oacute;n por Experiencia Profesional y emitir un dictamen a cada uno de &eacute;stos. Simplificando y agilizando este proceso con interfaces de usuario robustas, usables y seguras.</p>"',
-                proyectBibliography:
-                    '"<ul>\n<li>Jon Ducket, HTML &amp; CSS Design and build Websites. Firth Edition. John Wiley &amp; Sons, Inc. 2011</li>\n<li>Goldstein, Alexis. (2011). HTML5 y CSS3. Madrid: Anaya Multimedia-Anaya Interactiva.</li>\n<li>(2013). Aprender HTML5, CSS3 y Javascript con 100 .Barcelona: Marcombo, S.A..</li>\n<li>heurtel,olivier. (2019). PHP 7 2&ordf; edici&oacute;n: Desarrollar un sitio web din&aacute;mico e interactivo. Barcelona: Ediciones Eni.</li>\n<li>Welling, Luke Thomson, Laura. (2017). Desarrollo Web con PH…oyectos Tecnol&oacute;gicos . 2019, de Universidad Nacional de la Rioja Sitio web: <a href="https://reunir.unir.net/bitstream/handle/">https://reunir.unir.net/bitstream/handle/</a></li>\n<li>Cardenas Pina, C&eacute;sar Iv&aacute;n; Uriol Olivares, David Eloy. (2016). Sistema web para la gesti&oacute;n documental de titulaci&oacute;n. 2019, de Universidad Nacional deTrujillo Sitio web: <a href="http://dspace.unitru.edu.pe/handle/UNITRU/7940">http://dspace.unitru.edu.pe/handle/UNITRU/7940</a></li>\n</ul>"',
-
-                institute: [],
-                scholarship: [],
-                assessor: [],
             }
         },
 
@@ -665,52 +1336,55 @@
             saveProtocol: function() {
                 this.loading = true
 
-                this.institute.push(this.institutionName)
-                this.institute.push(this.institutionDepartment)
-                this.institute.push(this.institutionAddress)
-                this.institute.push(this.institutionPhone)
-
-                if (this.scholarshipInstitution != '' && this.scholarshipType != '' && this.scholarshipVigency != '') {
-                    this.scholarship.push(this.scholarshipInstitution)
-                    this.scholarship.push(this.scholarshipType)
-                    this.scholarship.push(this.scholarshipVigency)
-                }
-
-                if (
-                    this.adviserName != '' &&
-                    this.adviserAcademicGrade != '' &&
-                    this.adviserPhone != '' &&
-                    this.adviserInstitution != '' &&
-                    this.adviserDepartment != '' &&
-                    this.adviserInstitutionAddress != '' &&
-                    this.adviserPhone != ''
-                ) {
-                    this.assessor.push(this.adviserName)
-                    this.assessor.push(this.adviserAcademicGrade)
-                    this.assessor.push(this.adviserPhone)
-                    this.assessor.push(this.adviserInstitution)
-                    this.assessor.push(this.adviserDepartment)
-                    this.assessor.push(this.adviserInstitutionAddress)
-                    this.assessor.push(this.adviserPhone)
-                }
-
                 axios
-                    .post('thesis_protocols', {
-                        thesis_protocol_title: this.title,
-                        thesis_protocol_institution: this.institute,
-                        thesis_protocol_scholarship: this.scholarship,
-                        thesis_protocol_assessor: this.assessor,
-                        thesis_protocol_summary: this.proyectSummary,
-                        thesis_protocol_antecedent: this.proyectAntecedent,
-                        thesis_protocol_general_objective: this.proyectGeneralObjective,
-                        thesis_protocol_methodology: this.proyectMethodology,
-                        thesis_protocol_schedule: this.proyectSchedule,
-                        thesis_protocol_infrastructure: this.proyectInfrastructure,
-                        thesis_protocol_art_state: this.proyectArtState,
-                        thesis_protocol_expected_results: this.proyectExpectedResults,
-                        thesis_protocol_socioeconomic_impact: this.proyectSocioeconomicImpact,
-                        thesis_protocol_contributions: this.proyectContributions,
-                        thesis_protocol_bibliography: this.proyectBibliography,
+                    .put('/thesis_protocols/' + this.thesisProtocol.thesis_protocol_student_id, {
+                        thesis_protocol_title: this.thesisProtocol.thesis_protocol_title,
+                        thesis_protocol_institution_name: this.thesisProtocol.thesis_protocol_institution_name,
+                        thesis_protocol_institution_department: this.thesisProtocol
+                            .thesis_protocol_institution_department,
+                        thesis_protocol_institution_address: this.thesisProtocol.thesis_protocol_institution_address,
+                        thesis_protocol_institution_phone: this.thesisProtocol.thesis_protocol_institution_phone,
+                        thesis_protocol_scholarship_institution: this.thesisProtocol
+                            .thesis_protocol_scholarship_institution,
+                        thesis_protocol_scholarship_type: this.thesisProtocol.thesis_protocol_scholarship_type,
+                        thesis_protocol_scholarship_vigency: this.thesisProtocol.thesis_protocol_scholarship_vigency,
+                        thesis_protocol_assessor_name: this.thesisProtocol.thesis_protocol_assessor_name,
+                        thesis_protocol_assessor_academic_degree: this.thesisProtocol
+                            .thesis_protocol_assessor_academic_degree,
+                        thesis_protocol_assessor_phone: this.thesisProtocol.thesis_protocol_assessor_phone,
+                        thesis_protocol_assessor_institution: this.thesisProtocol.thesis_protocol_assessor_institution,
+                        thesis_protocol_assessor_adscription_department: this.thesisProtocol
+                            .thesis_protocol_assessor_adscription_department,
+                        thesis_protocol_assessor_address: this.thesisProtocol.thesis_protocol_assessor_address,
+                        thesis_protocol_assessor_job_phone: this.thesisProtocol.thesis_protocol_assessor_job_phone,
+                        thesis_protocol_second_assessor_name: this.thesisProtocol.thesis_protocol_second_assessor_name,
+                        thesis_protocol_second_assessor_academic_degree: this.thesisProtocol
+                            .thesis_protocol_second_assessor_academic_degree,
+                        thesis_protocol_second_assessor_phone: this.thesisProtocol
+                            .thesis_protocol_second_assessor_phone,
+                        thesis_protocol_second_assessor_institution: this.thesisProtocol
+                            .thesis_protocol_second_assessor_institution,
+                        thesis_protocol_second_assessor_adscription_department: this.thesisProtocol
+                            .thesis_protocol_second_assessor_adscription_department,
+                        thesis_protocol_second_assessor_address: this.thesisProtocol
+                            .thesis_protocol_second_assessor_address,
+                        thesis_protocol_second_assessor_job_phone: this.thesisProtocol
+                            .thesis_protocol_second_assessor_job_phone,
+                        thesis_protocol_second_assessor_justification: this.thesisProtocol
+                            .thesis_protocol_second_assessor_justification,
+
+                        thesis_protocol_summary: this.thesisProtocol.thesis_protocol_summary,
+                        thesis_protocol_antecedent: this.thesisProtocol.thesis_protocol_antecedent,
+                        thesis_protocol_general_objective: this.thesisProtocol.thesis_protocol_general_objective,
+                        thesis_protocol_methodology: this.thesisProtocol.thesis_protocol_methodology,
+                        thesis_protocol_schedule: this.thesisProtocol.thesis_protocol_schedule,
+                        thesis_protocol_infrastructure: this.thesisProtocol.thesis_protocol_infrastructure,
+                        thesis_protocol_art_state: this.thesisProtocol.thesis_protocol_art_state,
+                        thesis_protocol_expected_results: this.thesisProtocol.thesis_protocol_expected_results,
+                        thesis_protocol_socioeconomic_impact: this.thesisProtocol.thesis_protocol_socioeconomic_impact,
+                        thesis_protocol_contributions: this.thesisProtocol.thesis_protocol_contributions,
+                        thesis_protocol_bibliography: this.thesisProtocol.thesis_protocol_bibliography,
+                        thesis_protocol_status_id: 2,
                     })
                     .then(response => {
                         this.thesisProtocolStepper++
@@ -718,6 +1392,58 @@
                     .catch(function(error) {
                         console.log(error)
                     })
+            },
+
+            getThesisProtocolFieldStatus: function(field) {
+                if (this.thesisProtocol.thesis_protocol_revisions.length != 0) {
+                    return this.thesisProtocol.thesis_protocol_revisions[
+                        this.thesisProtocol.thesis_protocol_revisions.length - 1
+                    ][field]
+                }
+            },
+
+            getThesisProtocolFieldCommentary: function(field) {
+                if (this.thesisProtocol.thesis_protocol_revisions.length != 0) {
+                    var commentary = this.thesisProtocol.thesis_protocol_revisions[
+                        this.thesisProtocol.thesis_protocol_revisions.length - 1
+                    ][field]
+                    if (commentary) {
+                        return commentary
+                    } else {
+                        return 'Ninguna'
+                    }
+                }
+            },
+
+            setData: function() {
+                this.thesisProtocol.thesis_protocol_title =
+                    'Aplicación Colaborativa para Gestionar la Evaluación de la Titulación por Experiencia Profesional'
+                this.thesisProtocol.thesis_protocol_institution_name = 'Benemérita Universidad Autónoma de Puebla.'
+                this.thesisProtocol.thesis_protocol_institution_department =
+                    'Facultad de Ciencias de la Computación BUAP'
+                this.thesisProtocol.thesis_protocol_institution_address =
+                    'Avenida San Claudio, Blvrd 14 Sur, Cdad. Universitaria, 72592 Puebla, Pue.'
+                this.thesisProtocol.thesis_protocol_institution_phone = '01 222 229 5500 ext. 7204'
+                // this.thesisProtocol.thesis_protocol_scholarship_institution = ''
+                // this.thesisProtocol.thesis_protocol_scholarship_type = ''
+                // this.thesisProtocol.thesis_protocol_scholarship_vigency = ''
+                this.thesisProtocol.thesis_protocol_assessor_name = 'Maria Luz Adolfina  Sánchea Gálvez'
+                this.thesisProtocol.thesis_protocol_assessor_academic_degree = 'Doctorado'
+                this.thesisProtocol.thesis_protocol_assessor_phone = '222-244-6117'
+                this.thesisProtocol.thesis_protocol_assessor_institution = 'Benemérita Universidad Autónoma de Puebla '
+                this.thesisProtocol.thesis_protocol_assessor_adscription_department =
+                    'Facultad de Ciencias de la Computación '
+                this.thesisProtocol.thesis_protocol_assessor_address =
+                    'Avenida San Claudio, Boulevard 14 Sur, Ciudad Universitaria, 72592'
+                this.thesisProtocol.thesis_protocol_assessor_job_phone = '01 222 229 5500 ext. 7220'
+                // this.thesisProtocol.thesis_protocol_second_assessor_name = ''
+                // this.thesisProtocol.thesis_protocol_second_assessor_academic_degree = ''
+                // this.thesisProtocol.thesis_protocol_second_assessor_phone = ''
+                // this.thesisProtocol.thesis_protocol_second_assessor_institution = ''
+                // this.thesisProtocol.thesis_protocol_second_assessor_adscription_department = ''
+                // this.thesisProtocol.thesis_protocol_second_assessor_address = ''
+                // this.thesisProtocol.thesis_protocol_second_assessor_job_phone = ''
+                // this.thesisProtocol.thesis_protocol_second_assessor_justification = ''
             },
         },
     }

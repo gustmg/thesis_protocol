@@ -20,9 +20,9 @@
                                         <v-list-item-group>
                                             <v-list-item>
                                                 <v-list-item-content>
-                                                    <v-list-item-title
-                                                        >Hay evaluadores sin estudiantes asignados</v-list-item-title
-                                                    >
+                                                    <v-list-item-title>
+                                                        Hay evaluadores sin estudiantes asignados
+                                                    </v-list-item-title>
                                                 </v-list-item-content>
                                             </v-list-item>
                                         </v-list-item-group>
@@ -67,10 +67,81 @@
                 <v-card>
                     <v-card-title>
                         <v-icon>mdi-file-document</v-icon>
-                        Gráfica de protocolos
+                        Lista de protocolos
                     </v-card-title>
+                    <v-card-text>
+                        <v-container class="py-0">
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-list>
+                                        <v-list-item
+                                            v-for="thesis_protocol in thesisProtocols"
+                                            v-bind:key="thesis_protocol.thesis_protocol_student_id"
+                                        >
+                                            <v-list-item-content>
+                                                <v-list-item-title>
+                                                    {{ thesis_protocol.thesis_protocol_title }}
+                                                </v-list-item-title>
+                                                <v-list-item-subtitle>
+                                                    de {{ thesis_protocol.student.name }},
+                                                    {{
+                                                        setEvaluatorText(
+                                                            thesis_protocol.thesis_protocol_status,
+                                                            thesis_protocol.evaluator
+                                                        )
+                                                    }}
+                                                </v-list-item-subtitle>
+                                            </v-list-item-content>
+                                            <assign-evaluator-dialog-component
+                                                v-if="thesis_protocol.thesis_protocol_status_id == 2"
+                                                :thesis-protocol-id="thesis_protocol.thesis_protocol_student_id"
+                                            ></assign-evaluator-dialog-component>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
                 </v-card>
             </v-col>
         </v-row>
     </v-container>
 </template>
+<script>
+    import { mapState, mapMutations, mapActions } from 'vuex'
+    export default {
+        computed: {
+            ...mapState('thesisProtocols', ['thesisProtocols']),
+        },
+
+        mounted() {
+            this.fetchThesisProtocols()
+        },
+
+        methods: {
+            ...mapActions('thesisProtocols', ['fetchThesisProtocols']),
+            setEvaluatorText: function(thesisProtocolStatus, evaluator) {
+                if (!evaluator) {
+                    return 'sin evaluador asignado.'
+                } else {
+                    switch (thesisProtocolStatus.thesis_protocol_status_id) {
+                        case 2:
+                            return 'en revisión por ' + evaluator.name
+                            break
+                        case 3:
+                            return 'revisado por ' + evaluator.name
+                            break
+                        case 4:
+                            return 'aprobado por ' + evaluator.name
+                            break
+                        case 5:
+                            return 'rechazado por ' + evaluator.name
+                            break
+                        default:
+                            break
+                    }
+                }
+            },
+        },
+    }
+</script>

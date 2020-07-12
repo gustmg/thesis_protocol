@@ -23,3 +23,5 @@ Route::get('logout', 'Auth\LoginController@logout')->name('logout');
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('thesis_protocols', 'ThesisProtocolController')->middleware('auth');
+Route::resource('evaluators', 'EvaluatorController')->middleware('auth');
+Route::resource('thesis_protocol_revisions', 'ThesisProtocolRevisionController')->middleware('auth');
