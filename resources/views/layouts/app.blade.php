@@ -20,7 +20,7 @@
                 @if(auth()->user()->user_type != 1)
                 <menu-drawer-component></menu-drawer-component>
                 @endif
-                <top-app-bar-component></top-app-bar-component>
+                <top-app-bar-component user-name="{{Auth::user()->name}}"></top-app-bar-component>
                 <v-main>
                     @yield('content')
                 </v-main>

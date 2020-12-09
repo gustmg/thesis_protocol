@@ -14,7 +14,9 @@ export default {
 
     mutations: {
         SET_THESIS_PROTOCOLS(state, thesisProtocols) {
-            state.thesisProtocols = thesisProtocols
+            thesisProtocols.forEach(thesisProtocol => {
+                if (thesisProtocol.thesis_protocol_status_id != 1) state.thesisProtocols.push(thesisProtocol)
+            })
         },
     },
 
